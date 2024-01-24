@@ -89,25 +89,30 @@ def seasonal_decomposition(time_series, time, period_range):
     return best_result
 
 
-# Read data from a CSV file into a DataFrame
-df = pd.read_csv('../../data/generated_data.csv')
-time_, time_series_ = df["X"], df["Y"]
+def main():
+    # Read data from a CSV file into a DataFrame
+    df = pd.read_csv('../../data/generated_data.csv')
+    time_, time_series_ = df["X"], df["Y"]
 
-# Apply Hodrick-Prescott filter with optimal lambda
-cycle, trend, optimal_lambda = apply_hp_filter_with_optimal_lambda(time_series=time_series_, time=time_,
-                                                                   lambda_range=[1, 10, 50, 100, 200, 500, 0.5])
-print(f"Optimal lambda: {optimal_lambda}")
+    # Apply Hodrick-Prescott filter with optimal lambda
+    cycle, trend, optimal_lambda = apply_hp_filter_with_optimal_lambda(time_series=time_series_, time=time_,
+                                                                       lambda_range=[1, 10, 50, 100, 200, 500, 0.5])
+    print(f"Optimal lambda: {optimal_lambda}")
 
-# Perform seasonal decomposition on the trend component
-result = seasonal_decomposition(time_series=trend, time=time_, period_range=[10, 20, 50, 100, 200, 500, 1000, 2000])
+    # Perform seasonal decomposition on the trend component
+    result = seasonal_decomposition(time_series=trend, time=time_, period_range=[10, 20, 50, 100, 200, 500, 1000, 2000])
 
-# Create a DataFrame for the trend component and save it to a CSV file
-df_trend = df.copy()
-df_trend["Y"] = result.trend
-df_trend = df_trend.dropna()
-df_trend.to_csv('../../data/df_trend.csv', index=False)
+    # Create a DataFrame for the trend component and save it to a CSV file
+    df_trend = df.copy()
+    df_trend["Y"] = result.trend
+    df_trend = df_trend.dropna()
+    df_trend.to_csv('../../data/df_trend.csv', index=False)
 
-# Create a DataFrame for the seasonal component and save it to a CSV file
-df_seasonal = df.copy()
-df_seasonal["Y"] = result.seasonal
-df_seasonal.to_csv('../../data/df_seasonal.csv', index=False)
+    # Create a DataFrame for the seasonal component and save it to a CSV file
+    df_seasonal = df.copy()
+    df_seasonal["Y"] = result.seasonal
+    df_seasonal.to_csv('../../data/df_seasonal.csv', index=False)
+
+
+if __name__ == '__main__':
+    main()

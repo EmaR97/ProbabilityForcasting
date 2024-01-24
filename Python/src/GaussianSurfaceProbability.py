@@ -10,8 +10,10 @@ def gaussian(x, y, amp_, mean, std_):
 
 
 # Define a surface function using the Gaussian function
-def surface(y, x):
-    return gaussian(x, y, amp_=amp, std_=std, mean=trend)
+def create_surface(amp_, std_, mean):
+    def surface_(y, x): return gaussian(x, y, amp_=amp_, std_=std_, mean=mean)
+
+    return surface_
 
 
 # Calculate the probability of y > y_lower_bound within the specified x range
@@ -29,7 +31,7 @@ def evaluate_prob(x_l, x_u, y_l, y_u, surf, y_l_b):
 
 
 # Define a function to plot a 3D surface plot
-def plot_surface(x_l, x_u, y_l, y_u, surf, position):
+def plot_surface(fig, x_l, x_u, y_l, y_u, surf, position, y_b_l=-20, y_b_u=20):
     ax = fig.add_subplot(position, projection='3d')
 
     # Create a set of data points for x and y
@@ -42,8 +44,8 @@ def plot_surface(x_l, x_u, y_l, y_u, surf, position):
 
     # Plot the 3D surface with customizations
     ax.plot_surface(x, y, z, cmap='viridis')
-    ax.view_init(elev=0, azim=0)  # Set the viewing angle
-    ax.set_ylim([-20, 20])
+    ax.view_init(elev=60, azim=0)  # Set the viewing angle
+    ax.set_ylim([y_b_l, y_b_u])
     ax.set_zlim([0, 1])
 
     # Add labels to the axes
@@ -52,25 +54,31 @@ def plot_surface(x_l, x_u, y_l, y_u, surf, position):
     ax.set_zlabel('Z')
 
 
-# Set parameters for the Gaussian function and the surface plot
-amp, std, trend = 1, 2, lambda x: 0.1 * x + 2 + 3 * np.sin(2 * x) + 0.5 * np.sin(20 * x)
+def main():
+    # Set parameters for the Gaussian function and the surface plot
+    amp, std, trend = 1, 2, lambda x: 0.1 * x + 2 + 3 * np.sin(2 * x) + 0.5 * np.sin(20 * x)
 
-# Define integration limits for the double integral
-x_lower, x_upper = 0, 10
-y_lower, y_upper = -20, 20
-y_lower_bound = 5
+    # Define integration limits for the double integral
+    x_lower, x_upper = 0, 10
+    y_lower, y_upper = -20, 20
+    y_lower_bound = 5
 
-# Calculate and print the probability of y > y_lower_bound within the specified x range
-prob = evaluate_prob(x_lower, x_upper, y_lower, y_upper, surface, y_lower_bound)
+    surface = create_surface(amp, std, trend)
+    # Calculate and print the probability of y > y_lower_bound within the specified x range
+    prob = evaluate_prob(x_lower, x_upper, y_lower, y_upper, surface, y_lower_bound)
 
-# Create a 3D plot figure with two subplots
-fig = plt.figure(figsize=(20, 20))
+    # Create a 3D plot figure with two subplots
+    fig = plt.figure(figsize=(20, 20))
 
-# Plot the surface for the specified range
-plot_surface(x_lower, x_upper, y_lower, y_upper, surface, 211)
+    # Plot the surface for the specified range
+    plot_surface(fig, x_lower, x_upper, y_lower, y_upper, surface, 211)
 
-# Plot another surface for a different range in the second subplot
-plot_surface(x_lower, x_upper, y_lower_bound, 20, surface, 212)
+    # Plot another surface for a different range in the second subplot
+    plot_surface(fig, x_lower, x_upper, y_lower_bound, 20, surface, 212)
 
-# Show the plot
-plt.show()
+    # Show the plot
+    plt.show()
+
+
+if __name__ == '__main__':
+    main()

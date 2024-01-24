@@ -63,7 +63,7 @@ def polynomial_fit_and_plot(x, y, degree=1):
 def complete_fit_and_plot(x, y, poly_coef, period_coef):
     fitted_function = lambda x: poly_coef[0] + poly_coef[1] * x + poly_coef[2] * x ** 2 + period_coef[0] * x + \
                                 period_coef[1] * np.sin(period_coef[2] * x)
-    y_fitted = np.squeeze(fitted_function(y))
+    y_fitted = np.squeeze(fitted_function(x))
     plt.figure(figsize=(20, 20))
     # Plotting the base trend
     plt.subplot(3, 1, 1)
@@ -103,20 +103,24 @@ def print_error_distribution_and_return_stats(fitting_error):
     print(f"Standard deviation of the error: {error_std}")
     return error_mean, error_std
 
+def main():
+    df = pd.read_csv('../../data/generated_data.csv')
 
-df = pd.read_csv('../../data/generated_data.csv')
+    df_trend = pd.read_csv('../../data/df_trend.csv')
 
-df_trend = pd.read_csv('../../data/df_trend.csv')
+    df_seasonal = pd.read_csv('../../data/df_seasonal.csv')
 
-df_seasonal = pd.read_csv('../../data/df_seasonal.csv')
+    poly_coef_ = polynomial_fit_and_plot(x=df_trend["X"].values.reshape(-1, 1), y=df_trend["Y"].values.reshape(-1, 1),
+                                         degree=2)
+    # Use curve_fit to fit the function to the seasonal component
+    period_coef_ = seasonal_curve_fit_and_plot(f=seasonal_curve_fit_function, x=df_seasonal['X'], y=df_seasonal['Y'])
 
-poly_coef_ = polynomial_fit_and_plot(x=df_trend["X"].values.reshape(-1, 1), y=df_trend["Y"].values.reshape(-1, 1),
-                                     degree=2)
-# Use curve_fit to fit the function to the seasonal component
-period_coef_ = seasonal_curve_fit_and_plot(f=seasonal_curve_fit_function, x=df_seasonal['X'], y=df_seasonal['Y'])
+    y_fitted_, fitting_error_, fitted_function_ = complete_fit_and_plot(df["X"], df["Y"], poly_coef_, period_coef_)
 
-y_fitted_, fitting_error_, fitted_function_ = complete_fit_and_plot(df["X"], df["Y"], poly_coef_, period_coef_)
+    check_fitting_quality_and_print_metrics(df["Y"], y_fitted_)
 
-check_fitting_quality_and_print_metrics(df["Y"], y_fitted_)
+    e_mean, e_std = print_error_distribution_and_return_stats(fitting_error_)
 
-e_mean, e_std = print_error_distribution_and_return_stats(fitting_error_)
+
+if __name__ == '__main__':
+    main()
