@@ -6,7 +6,7 @@ from scipy import integrate
 
 # Define a Gaussian function with parameters amp_, mean, and std_
 def gaussian(x, y, amp_, mean, std_):
-    return amp_ * np.exp(-((y - mean(x)) / (2 * std_)) ** 2)
+    return amp_ * np.exp(-(((y - mean(x)) ** 2) / (2 * (std_ ** 2))))
 
 
 # Define a surface function using the Gaussian function
@@ -42,7 +42,7 @@ def plot_surface(x_l, x_u, y_l, y_u, surf, position):
 
     # Plot the 3D surface with customizations
     ax.plot_surface(x, y, z, cmap='viridis')
-    ax.view_init(elev=60, azim=0)  # Set the viewing angle
+    ax.view_init(elev=0, azim=0)  # Set the viewing angle
     ax.set_ylim([-20, 20])
     ax.set_zlim([0, 1])
 
@@ -53,7 +53,7 @@ def plot_surface(x_l, x_u, y_l, y_u, surf, position):
 
 
 # Set parameters for the Gaussian function and the surface plot
-amp, std, trend = 1, 2, lambda x: np.sin(x)
+amp, std, trend = 1, 2, lambda x: 0.1 * x + 2 + 3 * np.sin(2 * x) + 0.5 * np.sin(20 * x)
 
 # Define integration limits for the double integral
 x_lower, x_upper = 0, 10

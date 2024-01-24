@@ -218,25 +218,3 @@ def print_error_distribution(e):
 
 
 print_error_distribution(error)
-
-
-def print_probability_band():
-    # Plotting the base and fitted trends
-    plt.figure(figsize=(40, 20))
-    plt.plot(X, fitted_function, linestyle='--', color='blue', label='Fitted')
-    # Defining quantiles for shading
-    quantiles = [50, 75, 95]
-    # Shading the regions between quantiles
-    for q in quantiles:
-        error_quantiles = np.percentile(error, q, axis=0)
-        print(q, "  ", error_quantiles)
-        plt.fill_between(df["X"].values.ravel(), fitted_function - error_quantiles, fitted_function + error_quantiles,
-                         alpha=0.2, label=f'{q}% CI')
-    plt.title('Fitted Trend with Error Bands')
-    plt.xlabel('X-axis label')
-    plt.ylabel('Y-axis label')
-    plt.legend()
-    plt.show()
-
-
-print_probability_band()
