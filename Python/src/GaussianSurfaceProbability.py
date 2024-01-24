@@ -31,7 +31,7 @@ def evaluate_prob(x_l, x_u, y_l, y_u, surf, y_l_b):
 
 
 # Define a function to plot a 3D surface plot
-def plot_surface(fig, x_l, x_u, y_l, y_u, surf, position, y_b_l=-20, y_b_u=20):
+def plot_surface(fig, x_l, x_u, y_l, y_u, surf, position, y_b_l=-20, y_b_u=20, z_u=1):
     ax = fig.add_subplot(position, projection='3d')
 
     # Create a set of data points for x and y
@@ -46,7 +46,7 @@ def plot_surface(fig, x_l, x_u, y_l, y_u, surf, position, y_b_l=-20, y_b_u=20):
     ax.plot_surface(x, y, z, cmap='viridis')
     ax.view_init(elev=60, azim=0)  # Set the viewing angle
     ax.set_ylim([y_b_l, y_b_u])
-    ax.set_zlim([0, 1])
+    ax.set_zlim([0, z_u])
 
     # Add labels to the axes
     ax.set_xlabel('X')

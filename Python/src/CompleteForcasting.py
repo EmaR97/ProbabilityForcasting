@@ -56,10 +56,10 @@ prob = evaluate_prob(x_lower, x_upper, y_lower, y_upper, surface, y_lower_bound)
 fig = plt.figure(figsize=(20, 20))
 
 # Plot the surface for the specified range
-plot_surface(fig, x_lower, x_upper, y_lower, y_upper, surface, 211, y_lower, y_upper)
+plot_surface(fig, x_lower, x_upper, y_lower, y_upper, surface, 211, y_lower, y_upper, 0.1)
 
 # Plot another surface for a different range in the second subplot
-plot_surface(fig, x_lower, x_upper, y_lower_bound, y_upper, surface, 212, y_lower, y_upper)
+plot_surface(fig, x_lower, x_upper, y_lower_bound, y_upper, surface, 212, y_lower, y_upper, 0.1)
 
 # Show the plot
 plt.show()
