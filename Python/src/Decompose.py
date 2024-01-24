@@ -90,7 +90,7 @@ def seasonal_decomposition(time_series, time, period_range):
 
 
 # Read data from a CSV file into a DataFrame
-df = pd.read_csv('../data/generated_data.csv')
+df = pd.read_csv('../../data/generated_data.csv')
 time_, time_series_ = df["X"], df["Y"]
 
 # Apply Hodrick-Prescott filter with optimal lambda
@@ -105,9 +105,9 @@ result = seasonal_decomposition(time_series=trend, time=time_, period_range=[10,
 df_trend = df.copy()
 df_trend["Y"] = result.trend
 df_trend = df_trend.dropna()
-df_trend.to_csv('../data/df_trend.csv', index=False)
+df_trend.to_csv('../../data/df_trend.csv', index=False)
 
 # Create a DataFrame for the seasonal component and save it to a CSV file
 df_seasonal = df.copy()
 df_seasonal["Y"] = result.seasonal
-df_seasonal.to_csv('../data/df_seasonal.csv', index=False)
+df_seasonal.to_csv('../../data/df_seasonal.csv', index=False)

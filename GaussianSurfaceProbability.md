@@ -26,4 +26,4 @@ This script generates a 3D surface plot of a Gaussian function and calculates th
 This script serves as a tool for visualizing and analyzing the behavior of a Gaussian distribution in a three-dimensional space, offering insights into the likelihood of specific values occurring within a given range. Users can customize parameters and integration limits to explore different scenarios and gain a deeper understanding of the Gaussian surface's characteristics.
 
 Example:
-![GaussianSurfaceProbability.png.png](../GaussianSurfaceProbability.png.png)
+![GaussianSurfaceProbability.png.png](GaussianSurfaceProbability.png)

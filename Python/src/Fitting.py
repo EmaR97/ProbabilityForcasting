@@ -104,11 +104,11 @@ def print_error_distribution_and_return_stats(fitting_error):
     return error_mean, error_std
 
 
-df = pd.read_csv('../data/generated_data.csv')
+df = pd.read_csv('../../data/generated_data.csv')
 
-df_trend = pd.read_csv('../data/df_trend.csv')
+df_trend = pd.read_csv('../../data/df_trend.csv')
 
-df_seasonal = pd.read_csv('../data/df_seasonal.csv')
+df_seasonal = pd.read_csv('../../data/df_seasonal.csv')
 
 poly_coef_ = polynomial_fit_and_plot(x=df_trend["X"].values.reshape(-1, 1), y=df_trend["Y"].values.reshape(-1, 1),
                                      degree=2)
