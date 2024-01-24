@@ -11,4 +11,4 @@ Y = true_function + noise
 df = pd.DataFrame({'X': np.squeeze(X), 'Y': Y})
 
 # Save DataFrame to a CSV file
-df.to_csv('generated_data.csv', index=False)
+df.to_csv('../data/generated_data.csv', index=False)
