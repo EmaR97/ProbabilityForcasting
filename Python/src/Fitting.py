@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns  # Assuming seaborn is installed
+import seaborn as sns
 from scipy.optimize import curve_fit
 from scipy.stats import norm
 from sklearn.linear_model import LinearRegression
@@ -11,17 +11,17 @@ from sklearn.preprocessing import PolynomialFeatures
 from UtilityPlot import plot_time_series
 
 
-# Curve fitting using scipy.optimize.curve_fit
-def func(x, a, b, c):
+# Function for curve fitting using scipy.optimize.curve_fit
+def seasonal_curve_fit_function(x, a, b, c):
     return a * x + b * np.sin(c * x)
 
 
-def curve_fit_function(f, x, y):
+def seasonal_curve_fit_and_plot(f, x, y):
     res = curve_fit(f, x, y)
     # Extract the fitted parameters
-    a_fit, b_fit, c_fit = res[0]
+    a, b, c = res[0]
     # Create a new column in the DataFrame with the fitted values
-    y_fit = f(x, a_fit, b_fit, c_fit)
+    y_fit = f(x, a, b, c)
     print("Curve fit coefficients :", res[0])
     # Plot the original seasonal data and the fitted curve
     # Predicted data plot
@@ -34,10 +34,11 @@ def curve_fit_function(f, x, y):
     plot_time_series(x, y_fit, label='Fitted', title='Curve Fit', linestyle='--', color='blue')
     plt.show()
 
-    return a_fit, b_fit, c_fit
+    return a, b, c
 
 
-def polynomial_fit(x, y, degree=1):
+# Function for polynomial fitting
+def polynomial_fit_and_plot(x, y, degree=1):
     pr = PolynomialFeatures(degree=degree)
     x_poly = pr.fit_transform(x)
     lr_2 = LinearRegression()
@@ -58,10 +59,11 @@ def polynomial_fit(x, y, degree=1):
     return coefficients
 
 
-def fit_complete(x, y, poly_coef, period_coef):
-    y_fitted = np.squeeze(
-        poly_coef[0] + poly_coef[1] * x + poly_coef[2] * x ** 2 + period_coef[0] * x + period_coef[1] * np.sin(
-            period_coef[2] * x))
+# Function for complete fitting
+def complete_fit_and_plot(x, y, poly_coef, period_coef):
+    fitted_function = lambda x: poly_coef[0] + poly_coef[1] * x + poly_coef[2] * x ** 2 + period_coef[0] * x + \
+                                period_coef[1] * np.sin(period_coef[2] * x)
+    y_fitted = np.squeeze(fitted_function(y))
     plt.figure(figsize=(20, 20))
     # Plotting the base trend
     plt.subplot(3, 1, 1)
@@ -74,10 +76,11 @@ def fit_complete(x, y, poly_coef, period_coef):
     fitting_error = y - y_fitted
     plot_time_series(x, fitting_error, title='Error', linestyle='-', color='green')
     plt.show()
-    return y_fitted, fitting_error
+    return y_fitted, fitting_error, fitted_function
 
 
-def check_fitting_quality(y, y_fitted):
+# Function to check fitting quality
+def check_fitting_quality_and_print_metrics(y, y_fitted):
     mse = mean_squared_error(y, y_fitted)
     rmse = np.sqrt(mse)
     r_squared = r2_score(y, y_fitted)
@@ -86,18 +89,19 @@ def check_fitting_quality(y, y_fitted):
     print(f'R-squared: {r_squared}')
 
 
-# Assuming 'error' is the array of differences between the base and fitted trends
-def print_error_distribution(fitting_error):
+# Function to print error distribution
+def print_error_distribution_and_return_stats(fitting_error):
     plt.figure(figsize=(20, 20))
     sns.histplot(fitting_error, bins=30, kde=True, color='green')
     plt.title('Distribution of Errors')
     plt.xlabel('Error')
     plt.ylabel('Frequency')
     plt.show()
-    e_mean, e_std = norm.fit(fitting_error)
-    print(f"Mean of the error: {e_mean}")
-    print(f"Standard deviation of the error: {e_std}")
-    return e_mean, e_std
+
+    error_mean, error_std = norm.fit(fitting_error)
+    print(f"Mean of the error: {error_mean}")
+    print(f"Standard deviation of the error: {error_std}")
+    return error_mean, error_std
 
 
 df = pd.read_csv('../data/generated_data.csv')
@@ -106,13 +110,13 @@ df_trend = pd.read_csv('../data/df_trend.csv')
 
 df_seasonal = pd.read_csv('../data/df_seasonal.csv')
 
-p_c = polynomial_fit(x=df_trend["X"].values.reshape(-1, 1), y=df_trend["Y"].values.reshape(-1, 1), degree=2)
-
+poly_coef_ = polynomial_fit_and_plot(x=df_trend["X"].values.reshape(-1, 1), y=df_trend["Y"].values.reshape(-1, 1),
+                                     degree=2)
 # Use curve_fit to fit the function to the seasonal component
-c_c = curve_fit_function(f=func, x=df_seasonal['X'], y=df_seasonal['Y'])
+period_coef_ = seasonal_curve_fit_and_plot(f=seasonal_curve_fit_function, x=df_seasonal['X'], y=df_seasonal['Y'])
 
-y_fitted_, fitting_error_ = fit_complete(df["X"], df["Y"], p_c, c_c)
+y_fitted_, fitting_error_, fitted_function_ = complete_fit_and_plot(df["X"], df["Y"], poly_coef_, period_coef_)
 
-check_fitting_quality(df["Y"], y_fitted_)
+check_fitting_quality_and_print_metrics(df["Y"], y_fitted_)
 
-error_mean, error_std = print_error_distribution(fitting_error_)
+e_mean, e_std = print_error_distribution_and_return_stats(fitting_error_)
