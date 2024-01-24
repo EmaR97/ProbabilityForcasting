@@ -10,14 +10,9 @@ from sklearn.preprocessing import PolynomialFeatures
 from statsmodels.tsa.filters.hp_filter import hpfilter
 from statsmodels.tsa.seasonal import seasonal_decompose
 
-# Generate synthetic data
-X = np.linspace(start=0, stop=200, num=4000).reshape(-1, 1)
-true_function = np.squeeze(0.01 * X + np.sin(X))
-noise = np.random.normal(0, 0.1, size=X.shape[0])
-Y = true_function + noise
-
 # Create a DataFrame
-df = pd.DataFrame({'X': np.squeeze(X), 'Y': Y})
+df = pd.read_csv('generated_data.csv')
+X, Y = df["X"], df["Y"]
 
 
 def plot_time_series(x, y, label=None, xlabel='X', ylabel='Values', title=None, linestyle='-', color='blue'):
@@ -211,10 +206,10 @@ def print_error_distribution(e):
     plt.xlabel('Error')
     plt.ylabel('Frequency')
     plt.show()
-    error_mean, error_std = norm.fit(e)
-    print(f"Mean of the error: {error_mean}")
-    print(f"Standard deviation of the error: {error_std}")
-    return error_mean, error_std
+    e_mean, e_std = norm.fit(e)
+    print(f"Mean of the error: {e_mean}")
+    print(f"Standard deviation of the error: {e_std}")
+    return e_mean, e_std
 
 
-print_error_distribution(error)
+error_mean, error_std = print_error_distribution(error)
