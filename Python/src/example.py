@@ -11,7 +11,7 @@ from model_fitting import (apply_hp_filter_with_optimal_lambda, seasonal_decompo
                            print_error_distribution_and_return_stats, )
 
 # df = pd.read_csv('../../../data/data.csv')
-df = pd.read_csv('generated_data.csv')
+df = pd.read_csv('../../data/generated_data.csv')
 df['timestamp_sec'], df['value'] = df["X"], df["Y"]
 
 cycle, trend, optimal_lambda = apply_hp_filter_with_optimal_lambda(time_series=df['value'],
@@ -60,7 +60,7 @@ plot_time_series(df_trend["timestamp_sec"].values.reshape(-1, 1), df_trend["valu
 plt.subplot(2, 1, 2)
 plot_time_series(df_trend["timestamp_sec"].values.reshape(-1, 1),
                  polynomial_curve_function(df_trend["timestamp_sec"].values.reshape(-1, 1), poly_coef_[0],
-                                           poly_coef_[1], poly_coef_[2], 0, ), title='Polynomial Regression',
+                                           poly_coef_[1], poly_coef_[2], poly_coef_[3], ), title='Polynomial Regression',
                  linestyle='--', color='blue')
 plt.show()
 

@@ -118,6 +118,9 @@ def polynomial_fit_and_plot(x, y, degree=3):
     lr_2.fit(x_poly, y)
     coefficients = lr_2.coef_[0]
     print("Polynomial coefficients :", coefficients)
+    if degree < 3:
+        coefficients = np.concatenate((coefficients, np.zeros(3 - degree)))
+
     return coefficients
 
 
@@ -184,9 +187,7 @@ def complete_fit_and_plot(x, y, T, S):
     """
 
     def fitted_function(x):
-        return polynomial_curve_function(x, T[0], T[1], T[2], T[3] if len(T)>3 else 0) + seasonal_curve_function(x, S[0],
-                                                                                                             S[1], S[2],
-                                                                                                             S[3])
+        return polynomial_curve_function(x, T[0], T[1], T[2], T[3]) + seasonal_curve_function(x, S[0], S[1], S[2], S[3])
 
     y_fitted = np.squeeze(fitted_function(x))
     fitting_error = y - y_fitted
