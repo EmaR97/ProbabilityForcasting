@@ -9,6 +9,7 @@ from model_fitting import (apply_hp_filter_with_optimal_lambda, seasonal_decompo
                            polynomial_curve_function, seasonal_curve_fit_and_plot, seasonal_curve_function,
                            complete_fit_and_plot, check_fitting_quality_and_print_metrics,
                            print_error_distribution_and_return_stats, )
+from test import calculate_mean_probability, display_probability_surface
 
 # df = pd.read_csv('../../../data/data.csv')
 df = pd.read_csv('../../data/generated_data.csv')
@@ -103,32 +104,38 @@ plt.xlabel('Error')
 plt.ylabel('Frequency')
 plt.show()
 
-
+#
 x_lower_limit, x_upper_limit = 0, 10
 y_lower_bound = 1
+#
+# x_values = np.linspace(x_lower_limit, x_upper_limit, 1000)
+# # Calculate the trend values
+# trend_values = fitted_function_(x_values)
+# # Calculate the maximum and minimum trend values
+# max_trend_value = np.max(trend_values)
+# min_trend_value = np.min(trend_values)
+# # Set the lower and upper limits of y based on trend values and standard deviation
+# y_lower_limit = min_trend_value - 4 * e_std
+# y_upper_limit = max_trend_value + 4 * e_std
+# # Generate the surface function using the trend and standard deviation
+# surface = generate_surface_function(e_std, fitted_function_)
+# # Calculate the probability of y being out of bounds
+# prob = calculate_probability(x_lower_limit, x_upper_limit, y_lower_limit, y_upper_limit, surface, y_lower_bound)
+#
+# # Create a 3D plot figure with two subplots
+# fig = plt.figure(figsize=(20, 20))
+#
+# # Plot the surface for the specified range
+# plot_surface(fig, x_lower_limit, x_upper_limit, y_lower_limit, y_upper_limit, surface, 211,y_lower_limit, y_upper_limit,)
+#
+# # Plot another surface for a different range in the second subplot
+# plot_surface(fig, x_lower_limit, x_upper_limit, y_lower_bound, y_upper_limit, surface, 212,y_lower_limit, y_upper_limit,)
+#
+# # Show the plot
+# plt.show()
 
-x_values = np.linspace(x_lower_limit, x_upper_limit, 1000)
-# Calculate the trend values
-trend_values = fitted_function_(x_values)
-# Calculate the maximum and minimum trend values
-max_trend_value = np.max(trend_values)
-min_trend_value = np.min(trend_values)
-# Set the lower and upper limits of y based on trend values and standard deviation
-y_lower_limit = min_trend_value - 4 * e_std
-y_upper_limit = max_trend_value + 4 * e_std
-# Generate the surface function using the trend and standard deviation
-surface = generate_surface_function(e_std, fitted_function_)
-# Calculate the probability of y being out of bounds
-prob = calculate_probability(x_lower_limit, x_upper_limit, y_lower_limit, y_upper_limit, surface, y_lower_bound)
+mean_probability, _, _, base_values = calculate_mean_probability(fitted_function_, e_std, x_lower_limit, x_upper_limit,
+                                                                 y_lower_bound, 1000)
+print(f"Mean probability of y > {y_lower_bound} given {x_lower_limit} < x < {x_upper_limit}: {mean_probability}%")
 
-# Create a 3D plot figure with two subplots
-fig = plt.figure(figsize=(20, 20))
-
-# Plot the surface for the specified range
-plot_surface(fig, x_lower_limit, x_upper_limit, y_lower_limit, y_upper_limit, surface, 211,y_lower_limit, y_upper_limit,)
-
-# Plot another surface for a different range in the second subplot
-plot_surface(fig, x_lower_limit, x_upper_limit, y_lower_bound, y_upper_limit, surface, 212,y_lower_limit, y_upper_limit,)
-
-# Show the plot
-plt.show()
+display_probability_surface(base_values, fitted_function_, e_std, y_lower_bound)
